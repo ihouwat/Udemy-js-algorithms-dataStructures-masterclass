@@ -163,6 +163,47 @@ class SinglyLinkedList{
         }
         return this;
     }
+    rotate(num){
+        // function to rotate the nodes by some number passed in. Num can be any integer
+        // if list is 1 - 2 - 3 - 4 - 5, and you rotate by 2, the list becomes 3 - 4 - 5 - 1 - 2. 
+        // if list is 1 - 2 - 3 - 4 - 5, and you rotate by -1, the list becomes 5 - 4 - 3 - 2 - 1.
+
+        // Edge case where there are no list items
+        if(this.length === 0) return undefined;
+        // Edge case where list does not need to rotate
+        if(Math.abs(num % this.length) === 0) return this;
+
+        let iterations;
+        let counter = 0;
+        let oldTail = this.tail;
+        let current = this.head;
+        let newTail = current;
+        
+        // Determining iterations for loop. Use of modulo ensures we don't traverse the list more than once
+        if (num > 0) {
+            // if num is positive
+            iterations = Math.abs(num % this.length);
+        } else {
+            // if num is negative
+            iterations = (num % this.length) + this.length;
+        }
+
+        while(counter < iterations){
+            newTail = current; // new tail always lags behind current
+            current = current.next;
+            counter++;
+        }
+        
+        // Sever the connection with the old tail
+        newTail.next = null;
+        // Have the old tail point to the current head
+        this.tail.next = this.head;
+        // Set the new tail;
+        this.tail = newTail;
+        // Set the new head;
+        this.head = current;
+        return this;
+    }
     // Short method to see the list in the order it is in
     print(){
         let arr = [];
@@ -177,8 +218,11 @@ class SinglyLinkedList{
 
 let list = new SinglyLinkedList()
 
-list.push(1)
-list.push(2)
-list.push('hi')
-list.push('there')
-list.reverse()
+list.push(5)
+list.push(10)
+list.push(15)
+list.push(20)
+list.push(25)
+// list.reverse()
+list.rotate(-2)
+list.print()
