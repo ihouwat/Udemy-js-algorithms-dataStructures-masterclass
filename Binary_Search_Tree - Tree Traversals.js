@@ -117,6 +117,19 @@ class BinarySearchTree {
         traverse(current);
         return data;
     }
+    findSecondLargestVal(){
+        // If tree is empty, return null
+        if(!this.root) return null;
+        let current = this.root;
+        let prev = null;
+        // Starting from root, keep going right until you hit the node on the far right of the tree
+        while(current.right){
+            prev = current;
+            current = current.right;
+        }
+        // Second largest value is either the left child or parent of the node on the far right
+        return current.left ? current.left.value : prev.value;
+    }
 }
 
 let tree = new BinarySearchTree();
