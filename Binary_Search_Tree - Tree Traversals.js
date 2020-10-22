@@ -118,17 +118,32 @@ class BinarySearchTree {
         return data;
     }
     findSecondLargestVal(){
-        // If tree is empty, return null
         if(!this.root) return null;
         let current = this.root;
         let prev = null;
-        // Starting from root, keep going right until you hit the node on the far right of the tree
         while(current.right){
             prev = current;
             current = current.right;
         }
-        // Second largest value is either the left child or parent of the node on the far right
         return current.left ? current.left.value : prev.value;
+    }
+    isBalanced(){
+        // A balanced tree is a tree where depth of all leaf nodes or nodes with single children differ by no more than one
+        // See: https://www.geeksforgeeks.org/how-to-determine-if-a-binary-tree-is-balanced
+        // This function returns true if tree balanced, otherwise returns false
+        if(!this.root) return null;
+    
+        // Find height starting from any given node
+        function findHeight(node){
+            let current = node;
+            if(!current) return 0;
+            return 1 + Math.max((findHeight(current.left)), (findHeight(current.right)));
+        }
+        // Find height of each side of the tree, starting from the left and right sides to the root
+        let leftSide = findHeight(this.root.left);
+        let rightSide = findHeight(this.root.right);
+        // return true if the difference between both sides is 0 or 1;
+        return Math.abs(leftSide - rightSide) <= 1;
     }
 }
 
@@ -142,7 +157,8 @@ tree.insert(25)
 tree.insert(15)
 tree.insert(1)
 tree.insert(12)
-tree.insert(12) // returns undefined since value is a duplicate
+// tree.insert(12) // returns undefined since value is a duplicate
 // tree.find(0) // true
 // tree.find(12) // true
 // tree.find(22) // false
+tree.isBalanced();
