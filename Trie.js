@@ -59,28 +59,95 @@ class Trie {
             current[word[index]].isWord = false;
         } else return undefined;
     }
-    autocomplete(prefix, words = [], index = 0){
-        // First have to find if the prefix sequence of letters is in our trie
-        let current = this.characters;
-        while(index < prefix.length - 1){
-            if(!current[prefix[index]]) return undefined;
-            current = current[prefix[index]].characters;
+
+    // My first autoComplete solution using helper recursive method. Long solution, meh
+//     autoComplete(prefix, words = [], index = 0){
+//         let queue = [];
+//         let nextChar = "";
+//         let current = this.characters;
+//         let prev;
+//         // First have to find if the prefix sequence of letters is in our trie
+//         while(index <= prefix.length - 1){
+//             if(!current[prefix[index]]) return words; // Return empty array if no autoComplete
+//             prev = current;
+//             current = current[prefix[index]].characters;
+//             index++;
+//         }
+//         // Set current location at last index of prefix string
+//         let currentWord = prefix;
+//         current = prev[prefix[index-1]];
+//         if(current.isWord) words.push(currentWord);
+//         // Push each child node of current into queue
+//         Object.entries(current.characters).forEach(val => queue.push(val));
+
+//         function helper(queue, currentWord, nextChar){
+//             while(queue.length > 0) {
+//                 //while queue add progressively to current word and check for further children
+//                 currentWord += nextChar
+//                 let letter = queue.pop();
+//                 if(letter[1].isWord) words.push(currentWord.concat(letter[0]));
+//                 if(Object.keys(letter[1].characters).length > 0){
+//                     Object.entries(letter[1].characters).forEach(char => {
+//                         let newQueue = [char]
+//                         helper(newQueue, currentWord, letter[0])
+//                     });
+//                 }
+//             }
+//         }
+//         helper(queue, currentWord, nextChar)
+//         return words;
+//     }
+
+    // My favorite autoComplete solution, from another student that uses the built-in getWords method
+//     autoComplete(prefix) {
+//         const words = []
+
+//         let trie = this
+
+//         for (let char of prefix) {
+//           trie = trie.characters[char]
+
+//           if (!trie) {
+//             break
+//           }
+//         }
+
+//         if (trie) {
+//           trie.getWords(words, prefix)
+//         }
+
+//         return words
+//       }
+
+    // Another elegant autoComplete recursive solution that relies on traversing to the 
+    // prefix's last node and starting getWords method from that location
+//      autoComplete(prefix, ind = 0) {
+
+//             if (ind < prefix.length) {
+//                 try {
+//                   return this.characters[prefix[ind]].autoComplete(prefix,ind + 1)
+//                 } catch (TypeError) {
+//                   return []
+//                 }
+//             }
+
+//             return this.getWords([],prefix)
+
+//         }
+
+    // My refactored solution that relies on getWords() method
+    autoComplete(prefix, words = [], index = 0){
+        let current = this;
+        // First have to find if the sequence of letters in the prefix input exists in our trie
+        while(index < prefix.length){
+             // Return empty array if no autoComplete
+            if(!current.characters[prefix[index]]) return words;
+            current = current.characters[prefix[index]];
             index++;
         }
-        let currentWord = prefix;
-        current = current[prefix[index]];
-
-        function helper(words, currentWord){
-            if(current.isWord) words.push(currentWord);
-                for (let letter in current.characters){
-                let nextWord = currentWord + letter;
-                current = current.characters[letter] // Here is the problem, how to make sure state returns to branching point
-                helper(words, nextWord);
-            }
-        }
-        if(current.isWord) words.push(currentWord);
-        helper(words, currentWord)
-        return words;
+        // Use getWords method, starting with current node
+        current.getWords(words, prefix) 
+        return words
     }
 }
 
@@ -95,10 +162,12 @@ t.addWord('awesome');
 t.addWord('argue');
 // t.getWords();
 // t.removeWord('fat')
-// t.characters.f.characters.a.characters.t.isWord
-// t.characters.f.characters.a.characters.t.characters.e.isWord
+// t.characters.f.characters.a.characters.t.isWord // false
+// t.characters.f.characters.a.characters.t.characters.e.isWord // true
 
 // t.removeWord('argue')
-// t.characters.f.characters.r
+// t.characters.a.characters.r // undefined
 
-t.autocomplete('fa')
+// t.autoComplete('fa') // ["fat", "fate", "father", "fast"]
+// t.autoComplete('a') //  ["argue", "awesome"]
+// t.autoComplete('arz') // []
